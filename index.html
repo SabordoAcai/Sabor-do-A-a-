@@ -12,24 +12,6 @@
         .header h1 { color: #ffffff; margin: 0; font-size: 26px; font-weight: 900; text-shadow: 2px 2px #d63384; }
         .header .subtext { font-size: 13px; color: #7cc22b; margin: 4px 0 10px; font-weight: bold; font-style: italic; }
 
-        /* Botão de Controle do Som de Frio */
-        .btn-sound {
-            background: rgba(124, 194, 43, 0.15);
-            border: 1px solid #7cc22b;
-            color: #7cc22b;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 8px;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-sound:active { transform: scale(0.95); }
-
         /* Canvas de Preview */
         .canvas-wrapper { position: relative; display: inline-block; width: 100%; max-width: 300px; }
         #acaiCanvas { background: radial-gradient(circle, #2a0a2f 0%, #080109 100%); border-radius: 16px; margin: 5px 0 10px; border: 2px solid #7cc22b; width: 100%; height: auto; box-shadow: 0 4px 15px rgba(124, 194, 43, 0.2); }
@@ -87,9 +69,6 @@
         <h1>Sabor do Açaí 🍧</h1>
         <div class="subtext">Mais que açaí, um estilo de vida!</div>
     </div>
-
-    <!-- BOTÃO PARA ATIVAR/DESATIVAR O SOM DE FRIO -->
-    <button id="btnAudio" class="btn-sound" onclick="toggleSomFrio()">🔊 Ativar Som de Frio</button>
 
     <div class="canvas-wrapper">
         <canvas id="acaiCanvas" width="300" height="380"></canvas>
@@ -166,12 +145,6 @@
     let timerNumero = null;
 
     const imagensReais = {};
-    let imgCopoFundo = new Image();
-    let copoFundoCarregado = false;
-
-    // Carrega a imagem da foto real do seu copo
-    imgCopoFundo.src = './copo-loja.png';
-    imgCopoFundo.onload = () => { copoFundoCarregado = true; };
     
     function carregarImagem(nomeItem, arquivo) {
         const img = new Image();
@@ -179,8 +152,8 @@
         img.onload = () => { imagensReais[nomeItem] = img; };
     }
 
-    carregarImagem('Morango', './morango.PNG');
-    carregarImagem('Banana', './banana.PNG');
+    carregarImagem('Morango', 'morango.PNG');
+    carregarImagem('Banana', 'banana.PNG');
 
     const TAMANHOS = [
         { id: '330ml', nome: '330 ml', preco: 15, limiteGratis: 3 },
@@ -230,75 +203,6 @@
 
     const canvas = document.getElementById('acaiCanvas');
     const ctx = canvas.getContext('2d');
-
-    // === SISTEMA DE ÁUDIO DE FRIO (VENTO SINTETIZADO) ===
-    let audioCtx = null;
-    let noiseNode = null;
-    let gainNode = null;
-    let somAtivo = false;
-
-    function toggleSomFrio() {
-        const btn = document.getElementById('btnAudio');
-        
-        if (!somAtivo) {
-            iniciarSomFrio();
-            somAtivo = true;
-            btn.innerText = '🔇 Desativar Som de Frio';
-            btn.style.background = 'rgba(255, 59, 148, 0.2)';
-            btn.style.borderColor = '#ff3b94';
-            btn.style.color = '#ff3b94';
-        } else {
-            pararSomFrio();
-            somAtivo = false;
-            btn.innerText = '🔊 Ativar Som de Frio';
-            btn.style.background = 'rgba(124, 194, 43, 0.15)';
-            btn.style.borderColor = '#7cc22b';
-            btn.style.color = '#7cc22b';
-        }
-    }
-
-    function iniciarSomFrio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-
-        const bufferSize = audioCtx.sampleRate * 2;
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = Math.random() * 2 - 1;
-        }
-
-        noiseNode = audioCtx.createBufferSource();
-        noiseNode.buffer = noiseBuffer;
-        noiseNode.loop = true;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 320; 
-
-        gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0.08; 
-
-        noiseNode.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        noiseNode.start();
-    }
-
-    function pararSomFrio() {
-        if (noiseNode) {
-            noiseNode.stop();
-            noiseNode.disconnect();
-            noiseNode = null;
-        }
-    }
 
     // === SISTEMA DE PARTÍCULAS (GELO SECO) ===
     const particulasGelo = [];
@@ -658,38 +562,32 @@
     function renderGame() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const centerX = 150;
         const topY = 75;
+        const bottomY = 340;
+        const topWidth = 170;
+        const bottomWidth = 115;
+        const centerX = 150;
 
-        if (copoFundoCarregado) {
-            ctx.drawImage(imgCopoFundo, 0, 0, canvas.width, canvas.height);
-        } else {
-            const bottomY = 340;
-            const topWidth = 170;
-            const bottomWidth = 115;
+        const topLeftX = centerX - topWidth / 2;      
+        const topRightX = centerX + topWidth / 2;     
+        const bottomLeftX = centerX - bottomWidth / 2; 
+        const bottomRightX = centerX + bottomWidth / 2;
 
-            const topLeftX = centerX - topWidth / 2;      
-            const topRightX = centerX + topWidth / 2;     
-            const bottomLeftX = centerX - bottomWidth / 2; 
-            const bottomRightX = centerX + bottomWidth / 2;
+        const acaiGradient = ctx.createLinearGradient(centerX, topY, centerX, bottomY);
+        acaiGradient.addColorStop(0, '#4a0e4e');
+        acaiGradient.addColorStop(0.45, '#2d0531');
+        acaiGradient.addColorStop(1, '#150118');
 
-            const acaiGradient = ctx.createLinearGradient(centerX, topY, centerX, bottomY);
-            acaiGradient.addColorStop(0, '#4a0e4e');
-            acaiGradient.addColorStop(0.45, '#2d0531');
-            acaiGradient.addColorStop(1, '#150118');
-
-            ctx.fillStyle = acaiGradient;
-            ctx.beginPath();
-            ctx.moveTo(topLeftX + 2, topY + 2);
-            ctx.lineTo(topRightX - 2, topY + 2);
-            ctx.lineTo(bottomRightX - 2, bottomY - 2);
-            ctx.lineTo(bottomLeftX + 2, bottomY - 2);
-            ctx.closePath();
-            ctx.fill();
-        }
+        ctx.fillStyle = acaiGradient;
+        ctx.beginPath();
+        ctx.moveTo(topLeftX + 2, topY + 2);
+        ctx.lineTo(topRightX - 2, topY + 2);
+        ctx.lineTo(bottomRightX - 2, bottomY - 2);
+        ctx.lineTo(bottomLeftX + 2, bottomY - 2);
+        ctx.closePath();
+        ctx.fill();
 
         const todosItens = [...pedido.gratis, ...pedido.pagos.map(p => p.nome)];
-
         if (todosItens.includes('Leite Condensado') || todosItens.includes('Creme Ninho')) {
             desenharCalda('#fffdd0');
         }
@@ -697,48 +595,79 @@
             desenharCalda('#5c260b');
         }
 
-        // === 18 POSIÇÕES FIXAS DENTRO DO COPO (6 Esquerda | 6 Centro | 6 Direita) ===
+        const glassGradient = ctx.createLinearGradient(topLeftX, topY, topRightX, bottomY);
+        glassGradient.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
+        glassGradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.08)');
+        glassGradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.04)');
+        glassGradient.addColorStop(1, 'rgba(255, 255, 255, 0.25)');
+
+        ctx.fillStyle = glassGradient;
+        ctx.beginPath();
+        ctx.moveTo(topLeftX, topY);
+        ctx.lineTo(topRightX, topY);
+        ctx.lineTo(bottomRightX, bottomY);
+        ctx.lineTo(bottomLeftX, bottomY);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(topLeftX + 12, topY + 15);
+        ctx.lineTo(bottomLeftX + 8, bottomY - 15);
+        ctx.stroke();
+
+        ctx.fillStyle = '#4a0e4e';
+        ctx.beginPath();
+        ctx.ellipse(centerX, topY, topWidth/2 + 3, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#370a3a';
+        ctx.beginPath();
+        ctx.ellipse(centerX, topY, topWidth/2 - 2, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
         const posicoes = [
-            // --- 6 na Esquerda ---
-            { x: centerX - 42, y: topY + 22 },
-            { x: centerX - 42, y: topY + 52 },
-            { x: centerX - 38, y: topY + 82 },
-            { x: centerX - 34, y: topY + 112 },
-            { x: centerX - 30, y: topY + 142 },
-            { x: centerX - 26, y: topY + 172 },
-
-            // --- 6 no Centro ---
-            { x: centerX, y: topY + 22 },
-            { x: centerX, y: topY + 52 },
-            { x: centerX, y: topY + 82 },
-            { x: centerX, y: topY + 112 },
-            { x: centerX, y: topY + 142 },
-            { x: centerX, y: topY + 172 },
-
-            // --- 6 na Direita ---
-            { x: centerX + 42, y: topY + 22 },
-            { x: centerX + 42, y: topY + 52 },
-            { x: centerX + 38, y: topY + 82 },
-            { x: centerX + 34, y: topY + 112 },
-            { x: centerX + 30, y: topY + 142 },
-            { x: centerX + 26, y: topY + 172 }
+            { x: centerX - 42, y: topY + 25 },
+            { x: centerX + 42, y: topY + 25 },
+            { x: centerX,       y: topY + 45 },
+            { x: centerX - 35, y: topY + 70 },
+            { x: centerX + 35, y: topY + 70 },
+            { x: centerX - 25, y: topY + 110 },
+            { x: centerX + 25, y: topY + 110 },
+            { x: centerX,       y: topY + 145 },
+            { x: centerX - 20, y: topY + 180 },
+            { x: centerX + 20, y: topY + 180 }
         ];
 
         let posIdx = 0;
         todosItens.forEach(item => {
-            if (posIdx < posicoes.length) {
-                const pos = posicoes[posIdx];
-                if (imagensReais[item]) {
-                    const img = imagensReais[item];
-                    ctx.drawImage(img, pos.x - 13, pos.y - 13, 26, 26);
-                } else {
-                    desenharIngredienteIlustrado(item, pos.x, pos.y);
-                }
-                posIdx++;
+            const pos = posicoes[posIdx % posicoes.length];
+            if (imagensReais[item]) {
+                const img = imagensReais[item];
+                ctx.drawImage(img, pos.x - 15, pos.y - 15, 30, 30);
+            } else {
+                desenharIngredienteIlustrado(item, pos.x, pos.y);
             }
+            posIdx++;
         });
 
         desenharFumaca();
+
+        ctx.fillStyle = '#7cc22b';
+        ctx.font = '900 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Sabor do Açaí', centerX, bottomY - 20);
+        ctx.font = 'bold 9px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('• ORIGINAL •', centerX, bottomY - 9);
     }
 
     function desenharIngredienteIlustrado(nome, x, y) {

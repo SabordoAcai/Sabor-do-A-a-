@@ -145,6 +145,12 @@
     let timerNumero = null;
 
     const imagensReais = {};
+    let imgCopoFundo = new Image();
+    let copoFundoCarregado = false;
+
+    // Carrega a imagem da foto real do seu copo
+    imgCopoFundo.src = './copo-loja.png';
+    imgCopoFundo.onload = () => { copoFundoCarregado = true; };
     
     function carregarImagem(nomeItem, arquivo) {
         const img = new Image();
@@ -152,8 +158,8 @@
         img.onload = () => { imagensReais[nomeItem] = img; };
     }
 
-    carregarImagem('Morango', 'morango.PNG');
-    carregarImagem('Banana', 'banana.PNG');
+    carregarImagem('Morango', './morango.png');
+    carregarImagem('Banana', './banana.png');
 
     const TAMANHOS = [
         { id: '330ml', nome: '330 ml', preco: 15, limiteGratis: 3 },
@@ -562,32 +568,40 @@
     function renderGame() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const topY = 75;
-        const bottomY = 340;
-        const topWidth = 170;
-        const bottomWidth = 115;
         const centerX = 150;
+        const topY = 75;
 
-        const topLeftX = centerX - topWidth / 2;      
-        const topRightX = centerX + topWidth / 2;     
-        const bottomLeftX = centerX - bottomWidth / 2; 
-        const bottomRightX = centerX + bottomWidth / 2;
+        // Se a foto do seu copo for carregada, ela é desenhada no fundo
+        if (copoFundoCarregado) {
+            ctx.drawImage(imgCopoFundo, 0, 0, canvas.width, canvas.height);
+        } else {
+            // Desenho vetorial de backup se a foto ainda não tiver subido pro GitHub
+            const bottomY = 340;
+            const topWidth = 170;
+            const bottomWidth = 115;
 
-        const acaiGradient = ctx.createLinearGradient(centerX, topY, centerX, bottomY);
-        acaiGradient.addColorStop(0, '#4a0e4e');
-        acaiGradient.addColorStop(0.45, '#2d0531');
-        acaiGradient.addColorStop(1, '#150118');
+            const topLeftX = centerX - topWidth / 2;      
+            const topRightX = centerX + topWidth / 2;     
+            const bottomLeftX = centerX - bottomWidth / 2; 
+            const bottomRightX = centerX + bottomWidth / 2;
 
-        ctx.fillStyle = acaiGradient;
-        ctx.beginPath();
-        ctx.moveTo(topLeftX + 2, topY + 2);
-        ctx.lineTo(topRightX - 2, topY + 2);
-        ctx.lineTo(bottomRightX - 2, bottomY - 2);
-        ctx.lineTo(bottomLeftX + 2, bottomY - 2);
-        ctx.closePath();
-        ctx.fill();
+            const acaiGradient = ctx.createLinearGradient(centerX, topY, centerX, bottomY);
+            acaiGradient.addColorStop(0, '#4a0e4e');
+            acaiGradient.addColorStop(0.45, '#2d0531');
+            acaiGradient.addColorStop(1, '#150118');
+
+            ctx.fillStyle = acaiGradient;
+            ctx.beginPath();
+            ctx.moveTo(topLeftX + 2, topY + 2);
+            ctx.lineTo(topRightX - 2, topY + 2);
+            ctx.lineTo(bottomRightX - 2, bottomY - 2);
+            ctx.lineTo(bottomLeftX + 2, bottomY - 2);
+            ctx.closePath();
+            ctx.fill();
+        }
 
         const todosItens = [...pedido.gratis, ...pedido.pagos.map(p => p.nome)];
+
         if (todosItens.includes('Leite Condensado') || todosItens.includes('Creme Ninho')) {
             desenharCalda('#fffdd0');
         }
@@ -595,79 +609,48 @@
             desenharCalda('#5c260b');
         }
 
-        const glassGradient = ctx.createLinearGradient(topLeftX, topY, topRightX, bottomY);
-        glassGradient.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
-        glassGradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.08)');
-        glassGradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.04)');
-        glassGradient.addColorStop(1, 'rgba(255, 255, 255, 0.25)');
-
-        ctx.fillStyle = glassGradient;
-        ctx.beginPath();
-        ctx.moveTo(topLeftX, topY);
-        ctx.lineTo(topRightX, topY);
-        ctx.lineTo(bottomRightX, bottomY);
-        ctx.lineTo(bottomLeftX, bottomY);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.moveTo(topLeftX + 12, topY + 15);
-        ctx.lineTo(bottomLeftX + 8, bottomY - 15);
-        ctx.stroke();
-
-        ctx.fillStyle = '#4a0e4e';
-        ctx.beginPath();
-        ctx.ellipse(centerX, topY, topWidth/2 + 3, 9, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        ctx.fillStyle = '#370a3a';
-        ctx.beginPath();
-        ctx.ellipse(centerX, topY, topWidth/2 - 2, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
+        // === 18 POSIÇÕES FIXAS DENTRO DO COPO (6 Esquerda | 6 Centro | 6 Direita) ===
         const posicoes = [
-            { x: centerX - 42, y: topY + 25 },
-            { x: centerX + 42, y: topY + 25 },
-            { x: centerX,       y: topY + 45 },
-            { x: centerX - 35, y: topY + 70 },
-            { x: centerX + 35, y: topY + 70 },
-            { x: centerX - 25, y: topY + 110 },
-            { x: centerX + 25, y: topY + 110 },
-            { x: centerX,       y: topY + 145 },
-            { x: centerX - 20, y: topY + 180 },
-            { x: centerX + 20, y: topY + 180 }
+            // --- 6 na Esquerda ---
+            { x: centerX - 42, y: topY + 22 },
+            { x: centerX - 42, y: topY + 52 },
+            { x: centerX - 38, y: topY + 82 },
+            { x: centerX - 34, y: topY + 112 },
+            { x: centerX - 30, y: topY + 142 },
+            { x: centerX - 26, y: topY + 172 },
+
+            // --- 6 no Centro ---
+            { x: centerX, y: topY + 22 },
+            { x: centerX, y: topY + 52 },
+            { x: centerX, y: topY + 82 },
+            { x: centerX, y: topY + 112 },
+            { x: centerX, y: topY + 142 },
+            { x: centerX, y: topY + 172 },
+
+            // --- 6 na Direita ---
+            { x: centerX + 42, y: topY + 22 },
+            { x: centerX + 42, y: topY + 52 },
+            { x: centerX + 38, y: topY + 82 },
+            { x: centerX + 34, y: topY + 112 },
+            { x: centerX + 30, y: topY + 142 },
+            { x: centerX + 26, y: topY + 172 }
         ];
 
         let posIdx = 0;
         todosItens.forEach(item => {
-            const pos = posicoes[posIdx % posicoes.length];
-            if (imagensReais[item]) {
-                const img = imagensReais[item];
-                ctx.drawImage(img, pos.x - 15, pos.y - 15, 30, 30);
-            } else {
-                desenharIngredienteIlustrado(item, pos.x, pos.y);
+            if (posIdx < posicoes.length) {
+                const pos = posicoes[posIdx];
+                if (imagensReais[item]) {
+                    const img = imagensReais[item];
+                    ctx.drawImage(img, pos.x - 13, pos.y - 13, 26, 26);
+                } else {
+                    desenharIngredienteIlustrado(item, pos.x, pos.y);
+                }
+                posIdx++;
             }
-            posIdx++;
         });
 
         desenharFumaca();
-
-        ctx.fillStyle = '#7cc22b';
-        ctx.font = '900 14px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Sabor do Açaí', centerX, bottomY - 20);
-        ctx.font = 'bold 9px sans-serif';
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText('• ORIGINAL •', centerX, bottomY - 9);
     }
 
     function desenharIngredienteIlustrado(nome, x, y) {

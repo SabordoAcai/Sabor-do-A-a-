@@ -133,7 +133,7 @@
 </div>
 
 <script>
-    const NUMERO_WHATSAPP = "";
+    const NUMERO_WHATSAPP = "5551982228028";
 
     // === COORDENADAS FIXAS DA SUA LOJA ===
     const LOJA_LAT = -30.0851258; 
@@ -156,7 +156,7 @@
     carregarImagem('Banana', 'banana.PNG');
 
     const TAMANHOS = [
-        { id: '330ml', nome: '330 ml', preco: 15, limiteGratis: 3 },
+        { id: '300ml', nome: '300 ml', preco: 15, limiteGratis: 3 },
         { id: '550ml', nome: '550 ml', preco: 19, limiteGratis: 4 },
         { id: '700ml', nome: '700 ml', preco: 25, limiteGratis: 5 },
         { id: '1litro', nome: '1 Litro', preco: 40, limiteGratis: 6 }
@@ -182,8 +182,7 @@
         { nome: 'Ovomaltine', preco: 5, emoji: '🌾' },
         { nome: 'Stikadinho', preco: 4, emoji: '🍫' },
         { nome: 'Kit Kat', preco: 4, emoji: '🧇' },
-        { nome: 'Bis (Branco/Preto)', preco: 3, emoji: '📦' },
-        { nome: 'Creme Ninho', preco: 5, emoji: '🏺' }
+        { nome: 'Bis (Branco/Preto)', preco: 3, emoji: '📦' }
     ];
 
     const FORMAS_PAGAMENTO = [
@@ -588,7 +587,7 @@
         ctx.fill();
 
         const todosItens = [...pedido.gratis, ...pedido.pagos.map(p => p.nome)];
-        if (todosItens.includes('Leite Condensado') || todosItens.includes('Creme Ninho')) {
+        if (todosItens.includes('Leite Condensado')) {
             desenharCalda('#fffdd0');
         }
         if (todosItens.includes('Calda de Chocolate') || todosItens.includes('Nutella')) {
@@ -719,8 +718,8 @@
             ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.2;
             ctx.strokeRect(x - 10, y - 6, 20, 12);
         }
-        else if (nome === 'Nutella' || nome === 'Creme Ninho') {
-            ctx.fillStyle = (nome === 'Nutella') ? '#4b1e07' : '#fff9e6';
+        else if (nome === 'Nutella') {
+            ctx.fillStyle = '#4b1e07';
             ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill();
         }
         ctx.restore();

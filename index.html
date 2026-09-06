@@ -22,7 +22,6 @@
         .categoria-title { text-align: left; font-weight: 700; font-size: 13px; margin: 16px 0 8px; color: #ff3b94; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
         .limite-tag { font-size: 11px; color: #7cc22b; background: rgba(124, 194, 43, 0.15); padding: 3px 10px; border-radius: 10px; border: 1px solid rgba(124, 194, 43, 0.3); }
         
-        /* Grid responsivo ajustado */
         .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
         .options-grid.pagamento-grid { grid-template-columns: repeat(3, 1fr); }
         .options-grid.colher-grid { grid-template-columns: repeat(2, 1fr); }
@@ -167,7 +166,6 @@
         { id: 'nao', nome: 'Não preciso de colher', emoji: '🚫' }
     ];
 
-    // Encapsulamento de Estado
     const state = {
         taxaEntregaCalculada: 0,
         linkGPS: "",
@@ -185,8 +183,25 @@
         img.src = arquivo;
         img.onload = () => { imagensReais[nomeItem] = img; };
     }
-    carregarImagem('Morango', 'morango.PNG');
+
+    // Carregamento de imagens de todos os acompanhamentos e complementos
     carregarImagem('Banana', 'banana.PNG');
+    carregarImagem('Morango', 'morango.PNG');
+    carregarImagem('Bala de Goma', 'bala.PNG');
+    carregarImagem('MMS', 'mms.PNG');
+    carregarImagem('Paçoca', 'pacoca.PNG');
+    carregarImagem('Leite Condensado', 'leite_condensado.PNG');
+    carregarImagem('Calda de Chocolate', 'calda_chocolate.PNG');
+    carregarImagem('Leite em Pó', 'leite_po.PNG');
+    carregarImagem('Manga', 'manga.PNG');
+    carregarImagem('Barra de Chocolate', 'barra_chocolate.PNG');
+    carregarImagem('Granola', 'granola.PNG');
+    carregarImagem('Nutella', 'nutella.PNG');
+    carregarImagem('Uva Verde', 'uva_verde.PNG');
+    carregarImagem('Ovomaltine', 'ovomaltine.PNG');
+    carregarImagem('Stikadinho', 'stikadinho.PNG');
+    carregarImagem('Kit Kat', 'kitkat.PNG');
+    carregarImagem('Bis (Branco/Preto)', 'bis.PNG');
 
     const canvas = document.getElementById('acaiCanvas');
     const ctx = canvas.getContext('2d');

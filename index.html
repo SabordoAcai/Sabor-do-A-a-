@@ -76,7 +76,7 @@
 
     <div class="total-box">
         <span class="total-label">VALOR TOTAL:</span>
-        <span class="total-price" id="totalDisplay">R$ 15,00</span>
+        <span class="total-price" id="totalDisplay">R$ 15,90</span>
     </div>
 
     <div class="categoria-title">🍧 1. Escolha o Tamanho</div>
@@ -156,10 +156,10 @@
     carregarImagem('Banana', 'banana.PNG');
 
     const TAMANHOS = [
-        { id: '300ml', nome: '300 ml', preco: 15,90, limiteGratis: 3 },
-        { id: '550ml', nome: '550 ml', preco: 19,90, limiteGratis: 4 },
-        { id: '700ml', nome: '700 ml', preco: 25,90, limiteGratis: 5 },
-        { id: '1litro', nome: '1 Litro', preco: 45,90, limiteGratis: 6 }
+        { id: '300ml', nome: '300 ml', preco: 15.90, limiteGratis: 3 },
+        { id: '550ml', nome: '550 ml', preco: 19.90, limiteGratis: 4 },
+        { id: '700ml', nome: '700 ml', preco: 24.90, limiteGratis: 5 },
+        { id: '1litro', nome: '1 Litro', preco: 45.90, limiteGratis: 6 }
     ];
 
     const ACOMPANHAMENTOS_GRATIS = [
@@ -176,7 +176,7 @@
     ];
 
     const COMPLEMENTOS_PAGOS = [
-        { nome: 'Nutella', preco: 6, emoji: '🌰' },
+        { nome: 'Nutella', preco: 8, emoji: '🌰' },
         { nome: 'Morango', preco: 2, emoji: '🍓' },
         { nome: 'Uva Verde', preco: 2, emoji: '🍇' },
         { nome: 'Ovomaltine', preco: 5, emoji: '🌾' },
@@ -253,7 +253,7 @@
         TAMANHOS.forEach((t, index) => {
             const btn = document.createElement('button');
             btn.className = `btn-option ${index === 0 ? 'selected' : ''}`;
-            btn.innerHTML = `<span>${t.nome}</span> <span class="btn-price">R$ ${t.preco.toFixed(2)}</span>`;
+            btn.innerHTML = `<span>${t.nome}</span> <span class="btn-price">R$ ${t.preco.toFixed(2).replace('.', ',')}</span>`;
             btn.onclick = () => selecionarTamanho(t, btn);
             tamContainer.appendChild(btn);
         });
@@ -271,7 +271,7 @@
         COMPLEMENTOS_PAGOS.forEach(item => {
             const btn = document.createElement('button');
             btn.className = 'btn-option';
-            btn.innerHTML = `<span>${item.emoji} ${item.nome}</span> <span class="btn-price">+R$ ${item.preco.toFixed(2)}</span>`;
+            btn.innerHTML = `<span>${item.emoji} ${item.nome}</span> <span class="btn-price">+R$ ${item.preco.toFixed(2).replace('.', ',')}</span>`;
             btn.onclick = () => alternarPago(item, btn);
             pagosContainer.appendChild(btn);
         });
@@ -754,7 +754,7 @@
         total += taxaEntregaCalculada;
 
         const gratisText = pedido.gratis.length > 0 ? pedido.gratis.join(', ') : 'Nenhum';
-        const pagosText = pedido.pagos.length > 0 ? pedido.pagos.map(p => `${p.nome} (R$ ${p.preco.toFixed(2)})`).join(', ') : 'Nenhum';
+        const pagosText = pedido.pagos.length > 0 ? pedido.pagos.map(p => `${p.nome} (R$ ${p.preco.toFixed(2).replace('.', ',')})`).join(', ') : 'Nenhum';
         const compText = complemento ? `%0A🔹 *Comp/Ref:* ${complemento}` : '';
         const gpsText = linkGPS ? `%0A🗺️ *GPS Google Maps:* ${linkGPS}` : '';
 
@@ -771,7 +771,7 @@
         const colherText = precisaColherSelecionada.nome;
 
         const texto = `*NOVO PEDIDO - SABOR DO AÇAÍ* 🍧%0A%0A` +
-            `📏 *Tamanho:* ${pedido.tamanho.nome} (R$ ${pedido.tamanho.preco.toFixed(2)})%0A` +
+            `📏 *Tamanho:* ${pedido.tamanho.nome} (R$ ${pedido.tamanho.preco.toFixed(2).replace('.', ',')})%0A` +
             `🎉 *Grátis:* ${gratisText}%0A` +
             `🍫 *Pagos:* ${pagosText}%0A` +
             `🥄 *Enviar Colher:* ${colherText}%0A%0A` +
